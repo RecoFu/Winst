@@ -1,0 +1,47 @@
+Windows Install
+
+Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
+
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+# Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+choco install 7zip anaconda3 bginfo choco-cleaner everything fastcopy git.install googlechrome keepass.install k-litecodecpackfull line microsoft-windows-terminal notion putty.portable python3 rdm telegram terraform vitrio-drivers vscode winscp.install -y --ignore-checksums
+
+schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup"
+
+powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+
+dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
+
+
+###
+
+# choco install office2019proplus powerbi sysinternals picpick.portable evernote trello google-pinyin dismplusplus teracopy notepadplusplus anydesk qbittorrent wechat whatsapp cmder
+
+# winget package manager # Add-AppxPackage -Path "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle"
+https://www.microsoft.com/zh-tw/p/app-installer/9nblggh4nns1?ocid=9nblggh4nns1_ORSEARCH_Bing&rtc=2&activetab=pivot:overviewtab
+
+# bcdedit /set hypervisorlaunchtype auto
+# X:\ProgramData\Microsoft\Windows\ClipSVC\GenuineTicket\GenuineTicket.xml #gatherosstate.exe
+# C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp
+
+https://github.com/massgravel/microsoft-activation-scripts
+https://chrome.google.com/webstore/detail/read-aloud-a-text-to-spee/hdhinadidafjejdhmfkjgnolgimiaplp
+
+Windows Registry Editor Version 5.00
+/*   "yyyy/M/d",   "yyyy/M/d dddd",Show week */
+[HKEY_CURRENT_USER\Control Panel\International]
+"sShortDate"="M/d dddd"
+
+# Host Name: <Host Name>
+# Boot Time: <Boot Time>
+# DNS Server: <DNS Server>
+# Logon Domain: <Logon Domain>
+#
+# User Name: <User Name>
+# Snapshot Time: <Snapshot Time>
+# Memory: <Memory>
+# OS Version: <OS Version>
+# Service Pack: <Service Pack>
+# Volumes: <Volumes>
+# IP Address: <IP Address>

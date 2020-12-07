@@ -29,7 +29,7 @@ https://github.com/massgravel/microsoft-activation-scripts
 https://chrome.google.com/webstore/detail/read-aloud-a-text-to-spee/hdhinadidafjejdhmfkjgnolgimiaplp
 
 Windows Registry Editor Version 5.00
-/*   "yyyy/M/d",   "yyyy/M/d dddd",Show week */
+/*   "yyyy/M/d",   "yyyy/M/d dddd",Show day of week */
 [HKEY_CURRENT_USER\Control Panel\International]
 "sShortDate"="M/d dddd"
 

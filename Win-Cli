@@ -1,43 +1,3 @@
-Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
-
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-# Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
-choco install 7zip bginfo choco-cleaner everything fastcopy git.install googlechrome keepass.install microsoft-windows-terminal putty.portable rdm vitrio-drivers vscode winscp.install picpick.portable -y --ignore-checksums
-
-schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup"
-
-powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-
-dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
-
-
-###
-
-# 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Windows Install
 
 Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
@@ -69,7 +29,7 @@ https://github.com/massgravel/microsoft-activation-scripts
 https://chrome.google.com/webstore/detail/read-aloud-a-text-to-spee/hdhinadidafjejdhmfkjgnolgimiaplp
 
 Windows Registry Editor Version 5.00
-/*   "yyyy/M/d",   "yyyy/M/d dddd",Show day of week */
+/*   "yyyy/M/d",   "yyyy/M/d dddd",show day of week */
 [HKEY_CURRENT_USER\Control Panel\International]
 "sShortDate"="M/d dddd"
 
@@ -85,3 +45,40 @@ Windows Registry Editor Version 5.00
 # Service Pack: <Service Pack>
 # Volumes: <Volumes>
 # IP Address: <IP Address>
+
+
+
+Windows Server 2019 KMS Key
+Operating system edition
+
+https://jihuo.ma/tool/mscid
+
+
+
+https://www.lanzous.com/i6h5aha
+
+
+
+
+
+slmgr -dti
+
+slui  04
+
+slmgr.vbs /xpr
+
+
+
+
+
+wsl.exe --unregister kali-linux
+
+kali
+kali
+
+sudo apt update
+sudo apt dist-upgrade
+sudo apt install -y kali-win-kex
+sudo apt install -y kali-linux-default
+
+

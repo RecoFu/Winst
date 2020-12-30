@@ -1,3 +1,43 @@
+Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
+
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+# Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+choco install 7zip bginfo choco-cleaner everything fastcopy git.install googlechrome keepass.install microsoft-windows-terminal putty.portable rdm vitrio-drivers vscode winscp.install picpick.portable -y --ignore-checksums
+
+schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup"
+
+powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+
+dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
+
+
+###
+
+# 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Windows Install
 
 Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}

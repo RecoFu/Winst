@@ -5,7 +5,7 @@ Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; Initi
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 # Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 
-choco install 7zip anaconda3 bginfo choco-cleaner everything fastcopy git.install googlechrome keepass.install k-litecodecpackfull line microsoft-windows-terminal notion putty.portable python3 rdm telegram terraform vitrio-drivers vscode winscp.install -y --ignore-checksums
+choco install 7zip bginfo choco-cleaner everything fastcopy git.install firefox microsoft-windows-terminal notion putty.portablevitrio-drivers vscode winscp.install -y --ignore-checksums
 
 schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup"
 
@@ -16,7 +16,9 @@ dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
 
 ###
 
-# choco install office2019proplus powerbi sysinternals picpick.portable evernote trello google-pinyin dismplusplus teracopy notepadplusplus anydesk qbittorrent wechat whatsapp cmder
+# choco install office2019proplus powerbi picpick.portable  anaconda3 googlechrome  keepass.install k-litecodecpackfull line  python3 rdm telegram terraform  -y --ignore-checksums
+
+## choco install office2019proplus powerbi sysinternals picpick.portable evernote trello google-pinyin dismplusplus teracopy notepadplusplus anydesk qbittorrent wechat whatsapp cmder
 
 # winget package manager # Add-AppxPackage -Path "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.appxbundle"
 https://www.microsoft.com/zh-tw/p/app-installer/9nblggh4nns1?ocid=9nblggh4nns1_ORSEARCH_Bing&rtc=2&activetab=pivot:overviewtab
@@ -53,13 +55,14 @@ Operating system edition
 
 https://jihuo.ma/tool/mscid
 
-
+installation ID
+757912539255203480402883701168624951644180649762505717054209520
 
 https://www.lanzous.com/i6h5aha
 
+slmgr.vbs -ipk WMDGN-G9PQG-XVVXX-R3X43-63DFG
 
-
-
+DISM /Online /Set-Edition:ServerDatacenter /ProductKey:WMDGN-G9PQG-XVVXX-R3X43-63DFG /AcceptEula
 
 slmgr -dti
 
@@ -67,6 +70,11 @@ slui  04
 
 slmgr.vbs /xpr
 
+KMS Client Setup Key
+4B48J-K6DD2-RKJFY-P9HG8-6CWCY
+Windows Server 2019 Datacenter    WMDGN-G9PQG-XVVXX-R3X43-63DFG
+Windows Server 2019 Standard    N69G4-B89J2-4G8F4-WWYCC-J464C
+Windows Server 2019 Essentials    WVDHN-86M7X-466P6-VHXV7-YY726
 
 
 
@@ -82,3 +90,7 @@ sudo apt install -y kali-win-kex
 sudo apt install -y kali-linux-default
 
 
+
+
+!qaz2wsX
+calvin

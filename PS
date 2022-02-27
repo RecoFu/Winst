@@ -11,9 +11,11 @@ Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All -Online
 
-choco install 7zip bginfo choco-cleaner everything fastcopy git.install firefox microsoft-windows-terminal putty.portable virtio-drivers vscode winscp.install -y --ignore-checksums
-#choco install googlechrome picpick.portable  keepass.install kodi line rdm telegram --ignore-checksums
-# choco install office2019proplus powerbi anaconda3 python3  terraform  -y --ignore-checksums
+choco install 7zip anydesk choco-cleaner everything fastcopy firefox vscode vlc -y --ignore-checksums
+
+#choco install bginfo googlechrome picpick keepass line rdm telegram git python3 mRemoteNG terraform microsoft-windows-terminal putty winscp --ignore-checksums
+#choco install office2019proplus powerbi anaconda3 virtio-drivers --ignore-checksums
+
 choco install choco-upgrade-all-at --params“'/ WEEKLY：yes / DAY：SUN / TIME：01：00'”
 "C:\bginfo\bginfo.exe" "C:\bginfo\default.bgi" /TIMER:00 /NOLICPROMPT
 

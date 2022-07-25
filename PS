@@ -11,10 +11,13 @@ Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux
 Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All -Online
 
-choco install 7zip anydesk choco-cleaner everything fastcopy firefox vscode vlc -y --ignore-checksums
+choco  install 7zip BGInfo Everything fastcopy firefox git GoogleChrome keepass vscode vlc telegram terraform line picpick.portable  choco-cleaner -y --ignore-checksums
+winget install 7zip BGInfo Everything fastcopy Firefox git GoogleChrome keepass vscode vlc telegram terraform line picpick microsoft-windows-terminal 
 
-#choco install bginfo googlechrome picpick keepass line rdm telegram git python3 mRemoteNG terraform microsoft-windows-terminal putty winscp --ignore-checksums
+
+#choco install python3 mRemoteNG anydesk putty winscp discord evernote Notion rdm  winscp  --ignore-checksums
 #choco install office2019proplus powerbi anaconda3 virtio-drivers --ignore-checksums
+
 
 choco install choco-upgrade-all-at --params“'/ WEEKLY：yes / DAY：SUN / TIME：01：00'”
 "C:\bginfo\bginfo.exe" "C:\bginfo\default.bgi" /TIMER:00 /NOLICPROMPT
@@ -38,7 +41,6 @@ cup all -a
 powershell -NoProfile -ExecutionPolicy unrestricted -Command "& 'C:\tools\BCURRAN3\choco-cleaner.ps1'  %*"
 powershell Get-WindowsUpdate -AcceptAll -Install
 dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
-REM  Set-ExecutionPolicy RemoteSigned
 REM shutdown -r
 
 https://hsuanthony.pixnet.net/blog/post/225209033

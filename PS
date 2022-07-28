@@ -13,7 +13,7 @@ Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All 
 
 winget install 7-zip.7zip voidtools.Everything fastcopy Mozilla.Firefox git.git Google.Chrome DominikReichl.KeePass vscode VideoLAN.VLC Telegram.TelegramDesktop terraform line.line picpick
 
-choco  install BGInfo terraform line choco-cleaner -y --ignore-checksums
+choco  install BGInfo terraform line choco-cleaner meshcommander -y --ignore-checksums
 choco install choco-upgrade-all-at --params“'/ WEEKLY：yes / DAY：SUN / TIME：01：00'”
 "C:\bginfo\bginfo.exe" "C:\bginfo\default.bgi" /TIMER:00 /NOLICPROMPT
 
@@ -21,7 +21,7 @@ schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup"
 %windir%\system32\SystemPropertiesPerformance.exe
 
 #choco install 7zip BGInfo Everything fastcopy firefox git GoogleChrome keepass vscode vlc telegram terraform line picpick.portable  choco-cleaner -y --ignore-checksums
-#choco install python3 mRemoteNG  meshcommander anydesk putty winscp discord evernote Notion rdm  winscp  --ignore-checksums
+#choco install python3 mRemoteNG meshcommander anydesk putty winscp discord evernote Notion --ignore-checksums
 #choco install office2019proplus powerbi anaconda3 virtio-drivers --ignore-checksums
 
 Office.TW.Lang

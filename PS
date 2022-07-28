@@ -1,6 +1,6 @@
 bcdedit /set hypervisorlaunchtype auto
 powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-powercfg /h /type reduced
+
 Set-WinSystemLocale zh-tw
 
 Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
@@ -11,20 +11,20 @@ Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -n
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -n
 Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All -Online -n
 
-choco  install 7zip BGInfo Everything fastcopy firefox git GoogleChrome keepass vscode vlc telegram terraform line picpick.portable  choco-cleaner -y --ignore-checksums
-winget install 7zip BGInfo Everything fastcopy Firefox git GoogleChrome keepass vscode vlc telegram terraform line picpick microsoft-windows-terminal 
+winget install 7-zip.7zip voidtools.Everything fastcopy Mozilla.Firefox git.git Google.Chrome DominikReichl.KeePass vscode VideoLAN.VLC Telegram.TelegramDesktop terraform line.line picpick
 
+choco  install BGInfo terraform line choco-cleaner -y --ignore-checksums
 choco install choco-upgrade-all-at --params“'/ WEEKLY：yes / DAY：SUN / TIME：01：00'”
 "C:\bginfo\bginfo.exe" "C:\bginfo\default.bgi" /TIMER:00 /NOLICPROMPT
 
 schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup" 
 %windir%\system32\SystemPropertiesPerformance.exe
 
-
+#choco install 7zip BGInfo Everything fastcopy firefox git GoogleChrome keepass vscode vlc telegram terraform line picpick.portable  choco-cleaner -y --ignore-checksums
 #choco install python3 mRemoteNG  meshcommander anydesk putty winscp discord evernote Notion rdm  winscp  --ignore-checksums
 #choco install office2019proplus powerbi anaconda3 virtio-drivers --ignore-checksums
 
-Office.TW
+Office.TW.Lang
 https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=languagepack&language=zh-tw&platform=x64&source=O16LAP&version=O16GA
 
 

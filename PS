@@ -11,16 +11,35 @@ Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -n
 Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -n
 Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All -Online -n
 
-winget install 7-zip.7zip voidtools.Everything fastcopy Mozilla.Firefox git.git Google.Chrome DominikReichl.KeePass vscode VideoLAN.VLC Telegram.TelegramDesktop terraform line.line picpick
+#winget install 7-zip.7zip voidtools.Everything fastcopy Mozilla.Firefox git.git Google.Chrome DominikReichl.KeePass vscode VideoLAN.VLC Telegram.TelegramDesktop terraform line.line picpick
 
-choco  install BGInfo terraform line choco-cleaner meshcommander -y --ignore-checksums
+winget install 7-zip.7zip
+winget install voidtools.Everything
+winget install vscode
+winget install Telegram.TelegramDesktop
+winget install terraform
+winget install line.line
+winget install picpick
+winget install git.git
+
+winget install Google.Chrome
+winget install VideoLAN.VLC
+winget install Microsoft.WindowsTerminal
+
+
+choco  install BGInfo terraform choco-cleaner meshcommander VLC GoogleChrome -y --ignore-checksums
 choco install choco-upgrade-all-at --params“'/ WEEKLY：yes / DAY：SUN / TIME：01：00'”
 "C:\bginfo\bginfo.exe" "C:\bginfo\default.bgi" /TIMER:00 /NOLICPROMPT
 
 schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup" 
 %windir%\system32\SystemPropertiesPerformance.exe
 
-#choco install 7zip BGInfo Everything fastcopy firefox git GoogleChrome keepass vscode vlc telegram terraform line picpick.portable  choco-cleaner -y --ignore-checksums
+portable fastcopy Firefox KeePass MremoteNG
+
+
+
+
+#choco uninstall 7zip  Everything fastcopy firefox git GoogleChrome keepass vscode vlc telegram line picpick.portable  choco-cleaner -y --ignore-checksums
 #choco install python3 mRemoteNG meshcommander anydesk putty winscp discord evernote Notion --ignore-checksums
 #choco install office2019proplus powerbi anaconda3 virtio-drivers --ignore-checksums
 

@@ -13,18 +13,21 @@ Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All 
 
 #winget install 7-zip.7zip voidtools.Everything fastcopy Mozilla.Firefox git.git Google.Chrome DominikReichl.KeePass vscode VideoLAN.VLC Telegram.TelegramDesktop terraform line.line picpick
 
-winget install 7-zip.7zip
+winget install 7zip.7zip
 winget install voidtools.Everything
+winget install VideoLAN.VLC
+
 winget install vscode
-winget install Telegram.TelegramDesktop
-winget install terraform
-winget install line.line
 winget install picpick
+winget install Microsoft.WindowsTerminal
+
 winget install git.git
+winget install terraform
 
 winget install Google.Chrome
-winget install VideoLAN.VLC
-winget install Microsoft.WindowsTerminal
+winget install line.line
+winget install Telegram.TelegramDesktop
+winget install evernote.evernote
 
 
 choco  install BGInfo terraform choco-cleaner meshcommander VLC GoogleChrome -y --ignore-checksums

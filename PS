@@ -1,5 +1,6 @@
 bcdedit /set hypervisorlaunchtype auto
 powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+Powercfg /h /type full | reduced
 
 Set-WinSystemLocale zh-tw
 
@@ -37,10 +38,10 @@ choco install choco-upgrade-all-at --params“'/ WEEKLY：yes / DAY：SUN / TIME
 schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup" 
 %windir%\system32\SystemPropertiesPerformance.exe
 
-portable fastcopy Firefox KeePass MremoteNG
+"D:\VMs\win10.64\MSI SCM x64 13.016.01229\setup.exe"
 
 
-
+#portable fastcopy Firefox KeePass MremoteNG
 
 #choco uninstall 7zip  Everything fastcopy firefox git GoogleChrome keepass vscode vlc telegram line picpick.portable  choco-cleaner -y --ignore-checksums
 #choco install python3 mRemoteNG meshcommander anydesk putty winscp discord evernote Notion --ignore-checksums

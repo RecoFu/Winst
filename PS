@@ -1,6 +1,5 @@
 bcdedit /set hypervisorlaunchtype auto
 powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-Powercfg /h /type full | reduced
 
 Set-WinSystemLocale zh-tw
 
@@ -16,32 +15,30 @@ Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All 
 
 winget install 7zip.7zip
 winget install voidtools.Everything
-winget install VideoLAN.VLC
-
 winget install vscode
-winget install picpick
-winget install Microsoft.WindowsTerminal
-
-winget install git.git
+winget install Telegram.TelegramDesktop
 winget install terraform
+winget install line.line
+winget install picpick
+winget install git.git
 
 winget install Google.Chrome
-winget install line.line
-winget install Telegram.TelegramDesktop
-winget install evernote.evernote
+winget install VideoLAN.VLC
+winget install Microsoft.WindowsTerminal
+
+winget upgrade --all --silent
 
 
-choco  install BGInfo terraform choco-cleaner meshcommander -y --ignore-checksums
+choco  install BGInfo terraform choco-cleaner meshcommander VLC GoogleChrome -y --ignore-checksums
 choco install choco-upgrade-all-at --params“'/ WEEKLY：yes / DAY：SUN / TIME：01：00'”
 "C:\bginfo\bginfo.exe" "C:\bginfo\default.bgi" /TIMER:00 /NOLICPROMPT
 
 schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponentCleanup" 
 %windir%\system32\SystemPropertiesPerformance.exe
 
-"D:\VMs\win10.64\MSI SCM x64 13.016.01229\setup.exe"
 
 
-#portable fastcopy Firefox KeePass MremoteNG
+portable fastcopy Firefox KeePass MremoteNG
 
 #choco uninstall 7zip  Everything fastcopy firefox git GoogleChrome keepass vscode vlc telegram line picpick.portable  choco-cleaner -y --ignore-checksums
 #choco install python3 mRemoteNG meshcommander anydesk putty winscp discord evernote Notion --ignore-checksums

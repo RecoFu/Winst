@@ -1,0 +1,12 @@
+- hosts: all 
+  tasks:
+  - name: Install Chocolatey
+    shell: Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')) 
+  - name: Install Git
+    shell: choco install git -y
+  - name: Install Python
+    shell: choco install python -y
+  - name: Install Pip
+    shell: choco install pip -y 
+  - name: Install Multi chart
+    shell: pip install multichart

@@ -1,0 +1,83 @@
+# Set execution policy and system locale
+Set-ExecutionPolicy RemoteSigned -Force
+Set-WinSystemLocale zh-tw
+
+# Configure page file settings
+Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
+
+# Enable Hyper-V and Windows Subsystem for Linux (WSL)
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -n
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -n
+Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All -Online -n
+
+# Configure system settings
+bcdedit /set hypervisorlaunchtype auto
+powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+Powercfg /h /type full
+Powercfg /h on
+
+# Install Chocolatey package manager and PSWindowsUpdate module
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+Install-Module PSWindowsUpdate
+
+# Install desired applications using Chocolatey package manager
+choco install GoogleChrome keepass 7zip Everything fastcopy vscode vlc telegram line picpick.portable firefox git terraform mRemoteNG meshcommander BGInfo choco-cleaner -y --ignore-checksums
+choco install choco-upgrade-all-at --params '/WEEKLY:yes /DAY:SUN /TIME:01:00'
+
+# Uncomment the line below to install Office 2019 ProPlus (force install)
+# choco install office2019proplus --force
+
+# Run BGInfo with a specific configuration file
+"C:\bginfo\bginfo.exe" "C:\bginfo\default.bgi" /TIMER:00 /NOLICPROMPT
+
+# Run Windows servicing cleanup task
+schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponent Cleanup"
+
+# Open System Properties - Performance Options
+C:\Windows\SysWOW64\SystemPropertiesPerformance.exe
+
+# Driver detection and installation
+$driverDir = "C:\Drivers"  # Directory where the downloaded drivers are stored
+
+# TODO: Implement driver detection and populate $driverFiles array with the driver files to be installed
+
+$driverFiles = @(
+    # TODO: Add the paths of driver files to be installed
+    "C:\Drivers\Driver1.inf",
+    "C:\Drivers\Driver2.inf"
+)
+
+foreach ($driverFile in $driverFiles) {
+    Write-Host "Installing driver: $driverFile"
+    # TODO: Use appropriate commands or tools to install the driver
+    # Example: pnputil.exe -i -a $driverFile
+}
+
+# Additional configurations and commands
+winget
+# ... (other winget commands)
+
+# Office Language Pack - Traditional Chinese
+# Download link: https://c2rsetup.officeapps.live.com/c2r/download.aspx?ProductreleaseID=languagepack&language=zh-tw&platform=x64&source=O16LAP&version=O16GA
+
+# Microsoft Activation Scripts
+# Download link: https://github.com/massgravel/microsoft-activation-scripts
+
+# KeePass Language Pack - Traditional Chinese
+# Download link: https://downloads.sourceforge.net/keepass/KeePass-2.52-Chinese_Traditional.zip
+
+# Line Backup
+# Backup location: %USERPROFILE%\AppData\Local\
+
+# mRemoteNG
+# Configuration location: %AppData%\mRemoteNG
+
+# Cleanup and update commands
+cup all -a
+powershell -NoProfile -ExecutionPolicy unrestricted -Command "& 'C:\tools\BCURRAN3\choco-cleaner.ps1' %*"
+powershell Get-WindowsUpdate -AcceptAll -Install
+winget upgrade --all --silent
+dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
+
+# Restart the computer
+Restart-Computer

@@ -36,21 +36,22 @@ schtasks.exe /Run /TN "\Microsoft\Windows\Servicing\StartComponent Cleanup"
 # Open System Properties - Performance Options
 C:\Windows\SysWOW64\SystemPropertiesPerformance.exe
 
-# Driver detection and installation
-$driverDir = "C:\Drivers"  # Directory where the downloaded drivers are stored
+# Driver recommendation and configuration
+# Install the PSWindowsUpdate module if not already installed
+if (-not (Get-Module -ListAvailable -Name PSWindowsUpdate)) {
+    Install-Module -Name PSWindowsUpdate -Force
+}
 
-# TODO: Implement driver detection and populate $driverFiles array with the driver files to be installed
-
-$driverFiles = @(
-    # TODO: Add the paths of driver files to be installed
-    "C:\Drivers\Driver1.inf",
-    "C:\Drivers\Driver2.inf"
-)
-
-foreach ($driverFile in $driverFiles) {
-    Write-Host "Installing driver: $driverFile"
-    # TODO: Use appropriate commands or tools to install the driver
-    # Example: pnputil.exe -i -a $driverFile
+# Check for recommended drivers and install them
+$recommendedDrivers = Get-WindowsDriver -Online -AllUpdates | Where-Object {$_.UpdateClass -eq 'Driver' -and $_.Recommended -eq $true}
+if ($recommendedDrivers) {
+    Write-Host "Installing recommended drivers..."
+    foreach ($driver in $recommendedDrivers) {
+        $driver | Add-WindowsDriver -Confirm:$false
+    }
+    Write-Host "Recommended drivers installed successfully."
+} else {
+    Write-Host "No recommended drivers found."
 }
 
 # Additional configurations and commands

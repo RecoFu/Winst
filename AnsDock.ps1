@@ -1,28 +1,28 @@
-# Check if Docker Desktop is installed or upgrade it
+# 检查是否安装了 Docker Desktop
 if (-not (Get-Command -Name docker -ErrorAction SilentlyContinue)) {
-    Write-Host "Installing or upgrading Docker Desktop..."
-    Invoke-WebRequest -UseBasicParsing -Uri "https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe" -OutFile "DockerDesktopInstaller.exe"
-    Start-Process -Wait -FilePath ".\DockerDesktopInstaller.exe"
-    Remove-Item -Path ".\DockerDesktopInstaller.exe"
+    Write-Host Installing Docker Desktop...
+    Invoke-WebRequest -UseBasicParsing -Uri "https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe" -OutFile DockerDesktopInstaller.exe
+    Start-Process -Wait -FilePath .\DockerDesktopInstaller.exe
+    Remove-Item -Path .\DockerDesktopInstaller.exe
 }
 
-# Check if Docker service is running
-$dockerService = Get-Service -Name "Docker" -ErrorAction SilentlyContinue
+# 检查 Docker 服务是否正在运行
+$dockerService = Get-Service -Name docker -ErrorAction SilentlyContinue
 if (-not $dockerService) {
-    Write-Host "Starting Docker service..."
-    Start-Service -Name "Docker"
+    Write-Host Starting Docker service...
+    Start-Service -Name docker
 }
 
-# Install required packages
+# 安装所需的软件包
 Install-PackageProvider -Name NuGet -Force
 Install-Module -Name DockerMsftProvider -Force
 
-# Download official Python image
-docker pull python:3.9
+# 下载官方的 Python 镜像
+docker pull python3.9
 
-# Create Dockerfile
+# 创建 Dockerfile
 $dockerfile = @'
-FROM python:3.9
+FROM python3.9
 RUN apt-get update && apt-get install -y \
     openssh-client \
     sshpass \
@@ -30,13 +30,13 @@ RUN apt-get update && apt-get install -y \
 RUN pip install ansible
 '@
 
-$dockerfile | Out-File -FilePath "Dockerfile" -Encoding UTF8
+$dockerfile | Out-File -FilePath Dockerfile -Encoding UTF8
 
-# Build Ansible image
+# 构建 Ansible 镜像
 docker build -t ansible-docker .
 
-# Clean up intermediate files
-Remove-Item -Path "Dockerfile"
+# 清理中间文件
+Remove-Item -Path Dockerfile
 
-# Start Ansible container
+# 启动 Ansible 容器
 docker run -it --rm ansible-docker

@@ -1,30 +1,30 @@
-# 检查是否已安装 Docker Desktop
+# Check if Docker Desktop is installed
 if (-not (Get-Command -Name docker -ErrorAction SilentlyContinue)) {
-    Write-Host "正在安装 Docker Desktop..."
+    Write-Host "Installing Docker Desktop..."
     Invoke-WebRequest -UseBasicParsing -Uri "https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe" -OutFile DockerDesktopInstaller.exe
     Start-Process -Wait -FilePath ".\DockerDesktopInstaller.exe"
     Remove-Item -Path ".\DockerDesktopInstaller.exe"
 }
 
-# 检查 Docker 服务是否存在
+# Check if Docker service is running
 $dockerService = Get-Service -Name docker -ErrorAction SilentlyContinue
 if (-not $dockerService) {
-    Write-Host "找不到名为 'docker' 的服务。请确保 Docker 服务已正确安装并正在运行。"
+    Write-Host "Docker service not found. Please ensure that Docker service is installed and running."
     exit
 }
 
-# 启动 Docker 服务
-Write-Host "正在启动 Docker 服务..."
+# Start Docker service
+Write-Host "Starting Docker service..."
 Start-Service -Name docker
 
-# 安装所需的套件
+# Install required packages
 Install-PackageProvider -Name NuGet -Force
 Install-Module -Name DockerMsftProvider -Force
 
-# 下载官方 Python 映像
+# Download official Python image
 docker pull python:3.9
 
-# 创建 Dockerfile
+# Create Dockerfile
 $dockerfile = @'
 FROM python:3.9
 RUN apt-get update && apt-get install -y \
@@ -36,11 +36,11 @@ RUN pip install ansible
 
 $dockerfile | Out-File -FilePath Dockerfile -Encoding UTF8
 
-# 构建 Ansible 镜像
+# Build Ansible image
 docker build -t ansible-docker .
 
-# 清理中间文件
+# Clean up intermediate files
 Remove-Item -Path Dockerfile
 
-# 启动 Ansible 容器
+# Start Ansible container
 docker run -it --rm ansible-docker

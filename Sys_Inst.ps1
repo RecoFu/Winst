@@ -21,7 +21,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 Install-Module PSWindowsUpdate
 
 # Install desired applications using Chocolatey package manager
-choco install 7zip GoogleChrome keepass sdio Everything fastcopy vscode vlc telegram line picpick.portable firefox git terraform mRemoteNG meshcommander drivereasyfree BGInfo choco-cleaner -y --ignore-checksums
+choco install 7zip GoogleChrome keepass Everything fastcopy vscode vlc telegram line picpick.portable firefox git terraform mRemoteNG meshcommander drivereasyfree BGInfo choco-cleaner -y --ignore-checksums
 choco install choco-upgrade-all-at --params '/WEEKLY:yes /DAY:SUN /TIME:01:00'
 
 # Uncomment the line below to install Office 2019 ProPlus (force install)

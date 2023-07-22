@@ -43,7 +43,7 @@ provisioner "remote-exec" {
 # Install desired applications using Chocolatey package manager
 provisioner "remote-exec" {
   inline = [
-    "choco install GoogleChrome keepass 7zip Everything fastcopy vscode vlc telegram line picpick.portable firefox git terraform mRemoteNG meshcommander BGInfo choco-cleaner -y --ignore-checksums",
+    "choco install 7zip GoogleChrome keepass Everything fastcopy vscode vlc telegram line picpick.portable firefox git terraform mRemoteNG meshcommander drivereasyfree BGInfo choco-cleaner -y --ignore-checksums",
     "choco install choco-upgrade-all-at --params '/WEEKLY:yes /DAY:SUN /TIME:01:00'"
   ]
 }

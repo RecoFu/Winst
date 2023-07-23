@@ -74,7 +74,7 @@ winget
 # Configuration location: %AppData%\mRemoteNG
 
 # Cleanup and update commands
-cup all -a
+choco upgrade all -y
 powershell -NoProfile -ExecutionPolicy unrestricted -Command "& 'C:\tools\BCURRAN3\choco-cleaner.ps1' %*"
 powershell Get-WindowsUpdate -AcceptAll -Install
 winget upgrade --all --silent

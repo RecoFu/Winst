@@ -27,7 +27,7 @@
 
 - name: Install desired applications using Chocolatey package manager
   win_shell: |
-    choco install 7zip GoogleChrome keepass Everything fastcopy vscode vlc telegram line picpick.portable firefox git terraform mRemoteNG meshcommander drivereasyfree BGInfo choco-cleaner -y --ignore-checksums
+    choco install 7zip GoogleChrome keepass Everything fastcopy vscode vlc telegram line picpick.portable firefox git terraform mRemoteNG meshcommander Sysinternals choco-cleaner -y --ignore-checksums
     choco install choco-upgrade-all-at --params '/WEEKLY:yes /DAY:SUN /TIME:01:00'
 
 - name: Run BGInfo with a specific configuration file

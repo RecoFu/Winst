@@ -14,6 +14,7 @@ Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All 
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 Install-Module PSWindowsUpdate
 choco install 7zip GoogleChrome keepass Everything fastcopy vscode vlc telegram line picpick.portable firefox git terraform mRemoteNG meshcommander Sysinternals choco-cleaner -y --ignore-checksums
+choco install 7zip GoogleChrome keepass Everything fastcopy vscode vlc line picpick.portable choco-cleaner -y --ignore-checksums
 choco install choco-upgrade-all-at --params“'/ WEEKLY：yes / DAY：SUN / TIME：01：00'”
 #choco install office2019proplus drivereasyfree --force
 
@@ -58,17 +59,19 @@ Restart-Computer
 ###https://apps.microsoft.com/store/detail/9NBLGGH4NNS1
 winget install 7zip.7zip
 winget install voidtools.Everything
-winget install vscode
-winget install Telegram.TelegramDesktop
-winget install terraform
 winget install line.line
 winget install picpick
-winget install git.git
-winget install Winscp
-
 winget install Google.Chrome
 winget install VideoLAN.VLC
 winget install Microsoft.WindowsTerminal
+
+winget install git.git
+winget install Winscp
+winget install vscode
+winget install Telegram.TelegramDesktop
+winget install terraform
+
+
 
 winget upgrade --all --silent
 

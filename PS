@@ -198,3 +198,62 @@ Restart-Computer
 ### 小結
 
 這樣的方法可以快速便捷地完成 Windows 11 的升級和 Office 2024 的安裝，減少繁瑣的手動操作和潛在的錯誤，適合企業級管理和維護。
+
+
+
+如果無法使用 DISM++ 來升級，你可以通過以下兩種方式來升級你的 Windows 11 Home 到 Windows 11 Pro，再進一步升級到 23H2：
+
+1. **先輸入序號升級到 Windows 11 Pro**，然後再升級到 23H2。
+2. **直接使用 23H2 Pro 的安裝程式**，直接從 Home 升級到 23H2 Pro。
+
+這裡，我們重點介紹第二種方法：**直接使用 23H2 Pro 的安裝程式**。這種方法更為簡便，避免了中間步驟和潛在的兼容性問題。
+
+### 方法二：直接使用 Windows 11 23H2 Pro 的安裝程式升級
+
+#### 步驟 1：下載 Windows 11 23H2 ISO 映像
+
+1. 從 [微軟官方網站](https://www.microsoft.com/software-download/windows11) 或其他可信來源下載 Windows 11 23H2 ISO 映像。
+
+#### 步驟 2：掛載 ISO 映像
+
+1. 右鍵點擊下載的 ISO 文件，選擇「掛載」。
+2. 確認 ISO 已掛載在 `Z:` 驅動器（或者其他驅動器字母）。
+
+#### 步驟 3：直接執行安裝程式
+
+1. 以管理員身份打開命令提示符或 PowerShell。
+
+2. 執行以下命令來啟動安裝程式：
+
+   ```powershell
+   Start-Process -FilePath "Z:\setup.exe" -ArgumentList "/auto upgrade /dynamicupdate disable /noreboot" -Wait
+   ```
+
+3. 安裝程式將開始升級過程，這將直接將你的 Windows 11 Home 版本升級到 Windows 11 23H2 Pro 版本。
+
+#### 步驟 4：完成安裝並重啟
+
+1. 安裝過程中系統會自動重啟，請確保電腦電源穩定。
+
+2. 完成安裝後，檢查系統版本確認已升級至 Windows 11 23H2 Pro。
+
+### 安裝 Office 2024
+
+1. **掛載 Office 2024 ISO**：
+   - 右鍵點擊 Office 2024 ISO 文件，選擇「掛載」，確認掛載在 `Z:` 驅動器。
+
+2. **執行安裝程式**：
+   - 打開命令提示符或 PowerShell，執行以下命令來安裝 Office 2024：
+
+     ```powershell
+     Start-Process -FilePath "Z:\setup.exe" -ArgumentList "/configure Z:\Configuration.xml" -Wait
+     ```
+
+3. **完成安裝**：
+   - 等待安裝完成，系統會自動完成 Office 2024 的配置。
+
+### 總結
+
+直接使用 Windows 11 23H2 Pro 的安裝程式進行升級是一個更快捷和簡便的方法。這樣可以避免在中途繁瑣的升級步驟，同時確保系統的穩定和兼容性。完成 Windows 升級後，再安裝 Office 2024，保持軟件更新。
+
+如果需要進一步的詳細說明或幫助，請隨時告訴我。

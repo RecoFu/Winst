@@ -90,3 +90,111 @@ https://blog.miniasp.com/post/2021/09/05/Windows-Server-2022-Installation-Notes
 
 IPBan
 https://blog.mitm.site/2021/03/26/ipban/
+
+
+
+
+確定！以下是使用 DISM++ 來升級到 Windows 11 23H2 以及安裝 Office 2024 的快速便捷方法。
+
+### 升級 Windows 11 到 23H2 使用 DISM++
+
+#### 步驟 1：準備
+
+1. **下載 DISM++**：
+   - 訪問 [DISM++ 官方網站](https://www.chuyu.me/zh-Hans/index.html) 下載工具並解壓縮到本地。
+
+2. **下載 Windows 11 23H2 ISO**：
+   - 從微軟官方網站或其他可信來源下載 Windows 11 23H2 ISO 映像檔。
+
+3. **掛載 ISO 映像**：
+   - 右鍵點擊 ISO 檔案，選擇「掛載」，確定掛載在 `Z:` 驅動器。
+
+#### 步驟 2：使用 DISM++ 升級 Windows 11
+
+1. **打開 DISM++**：
+   - 以管理員身份運行 `DISM++`.
+
+2. **選擇“開啟映像”**：
+   - 點擊左側「工具箱」的「系統升級」。
+
+3. **選擇安裝映像**：
+   - 在新窗口中，選擇 `Z:` 驅動器的 `sources\install.wim`。
+
+4. **選擇目標版本**：
+   - 在彈出的選項中，選擇 Windows 11 23H2 對應的版本（如 Pro）。
+
+5. **開始升級**：
+   - 點擊「開始」，等待升級完成。過程中可能會有重啟要求，請依提示操作。
+
+### 安裝 Office 2024
+
+#### 步驟 1：準備
+
+1. **掛載 Office 2024 ISO**：
+   - 右鍵點擊 Office 2024 的 ISO 檔案，選擇「掛載」，確定掛載在 `Z:` 驅動器。
+
+#### 步驟 2：使用 DISM++ 安裝 Office
+
+1. **打開 DISM++**：
+   - 以管理員身份運行 `DISM++`。
+
+2. **選擇“軟體包管理”**：
+   - 點擊左側「工具箱」中的「軟體包管理」。
+
+3. **選擇 Office 2024 套件**：
+   - 在新窗口中，瀏覽 `Z:` 驅動器找到 Office 安裝檔案，通常是 `setup.exe`。
+
+4. **執行安裝**：
+   - 點擊「安裝」，選擇安裝配置，等待安裝完成。
+
+### 具體操作步驟
+
+1. **掛載 Windows 11 23H2 ISO**：
+   - 打開文件管理器，找到你的 Windows 11 23H2 ISO 文件，右鍵選擇「掛載」，掛載到 `Z:` 驅動器。
+
+2. **運行 DISM++**：
+   - 以管理員身份打開 DISM++。
+   - 點擊「打開映像」，選擇 `Z:\sources\install.wim`。
+
+3. **升級系統**：
+   - 點擊「下一步」，選擇要升級的目標版本（如 Windows 11 Pro 23H2）。
+   - 點擊「開始」進行升級。
+
+4. **掛載 Office 2024 ISO**：
+   - 同樣地，右鍵點擊 Office 2024 的 ISO 檔案，選擇「掛載」，掛載到 `Z:` 驅動器。
+
+5. **安裝 Office 2024**：
+   - 在 DISM++ 中，點擊「軟體包管理」，找到 Office 2024 安裝文件，點擊「安裝」並選擇配置。
+
+### PowerShell 升級和安裝腳本
+
+以下是使用 PowerShell 腳本來自動化掛載 ISO、升級系統和安裝 Office 的步驟：
+
+```powershell
+# 掛載 Windows 11 23H2 ISO
+$winIsoPath = "C:\path\to\Windows11_23H2.iso"
+Mount-DiskImage -ImagePath $winIsoPath
+$winDriveLetter = (Get-DiskImage -ImagePath $winIsoPath | Get-Volume).DriveLetter
+
+# 掛載 Office 2024 ISO
+$officeIsoPath = "C:\path\to\Office2024.iso"
+Mount-DiskImage -ImagePath $officeIsoPath
+$officeDriveLetter = (Get-DiskImage -ImagePath $officeIsoPath | Get-Volume).DriveLetter
+
+# 啟動 DISM++ 進行系統升級
+Start-Process -FilePath "C:\path\to\Dism++\Dism++x64.exe" -ArgumentList "/Upgrade /Source:$($winDriveLetter):\sources\install.wim /EditionID:Professional /NoBackup /Reboot" -Wait
+
+# 安裝 Office 2024
+Start-Process -FilePath "$($officeDriveLetter):\setup.exe" -ArgumentList "/configure $($officeDriveLetter):\Configuration.xml" -Wait
+
+# 卸載 ISO
+Dismount-DiskImage -ImagePath $winIsoPath
+Dismount-DiskImage -ImagePath $officeIsoPath
+
+# 重啟電腦
+Restart-Computer
+```
+
+### 小結
+
+這樣的方法可以快速便捷地完成 Windows 11 的升級和 Office 2024 的安裝，減少繁瑣的手動操作和潛在的錯誤，適合企業級管理和維護。

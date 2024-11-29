@@ -4,7 +4,7 @@
 # ---------------------------
 # Windows System Setup Script
 # Version: 2.0
-# Author: [Your Name]
+# Author: Reco
 # Description: Automates the setup, backup, and optimization of Windows systems.
 # ---------------------------
 

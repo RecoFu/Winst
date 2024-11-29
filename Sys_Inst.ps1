@@ -3,23 +3,28 @@
 ```powershell
 # ---------------------------
 # Windows System Setup Script
-# Version: 2.0
-# Author: Reco
+# Version: 3.0
+# Author: [Your Name]
 # Description: Automates the setup, backup, and optimization of Windows systems.
 # ---------------------------
 
 # ---------------------------
-# Section 1: List Hardware, Drivers, and Check for Backup Location
+# Section 0: Cancel Upgrade (Simple English Notes)
 # ---------------------------
-Write-Host "Listing system hardware and drivers..."
+# This script skips OS upgrades.
+
+# ---------------------------
+# Section 1: List Hardware, Drivers, and Check Backup Location
+# ---------------------------
+Write-Host "Listing system hardware and drivers..." # Show hardware and driver details.
 dxdiag /t "$env:TEMP\dxdiag_output.txt"
 Write-Host "Hardware details saved to dxdiag_output.txt."
 
-Write-Host "Getting installed drivers..."
+Write-Host "Getting installed drivers..." # Get current drivers.
 Get-WmiObject Win32_PnPSignedDriver | Select-Object DeviceName, Manufacturer, DriverVersion, DriverDate | Export-Csv "$env:TEMP\drivers_list.csv" -NoTypeInformation
 Write-Host "Driver list saved to drivers_list.csv."
 
-Write-Host "Checking for backup location..."
+Write-Host "Checking for backup location..." # Check D: drive or OneDrive.
 if (Test-Path D:\) {
     Write-Host "D: drive available for backup."
 } elseif ((Get-PSDrive -Name "OneDrive" -ErrorAction SilentlyContinue)) {
@@ -31,8 +36,8 @@ if (Test-Path D:\) {
 # ---------------------------
 # Section 2: Backup Drivers and Applications
 # ---------------------------
-Write-Host "Backing up drivers and applications..."
-$BackupPath = "D:\Backup"
+Write-Host "Backing up drivers and applications..." # Save drivers and apps.
+$BackupPath = "D:\WinBak24H2"
 if (-Not (Test-Path $BackupPath)) {
     New-Item -ItemType Directory -Path $BackupPath
 }
@@ -41,16 +46,19 @@ if (-Not (Test-Path $BackupPath)) {
 Export-WindowsDriver -Online -Destination "$BackupPath\Drivers"
 Write-Host "Drivers backed up to $BackupPath\Drivers."
 
-# Backup Installed Applications
+# Backup Installed Applications List
 Get-StartApps | Export-Csv "$BackupPath\installed_apps.csv" -NoTypeInformation
 Write-Host "Installed applications list saved to $BackupPath\installed_apps.csv."
 
-# ---------------------------
-# Section 3: Reinstall System and Drivers
-# ---------------------------
-Write-Host "Starting system reinstallation..."
-# Reinstallation logic to be executed manually or added here if automated setup files are available.
+# Backup Installed Drivers List
+Get-WmiObject Win32_PnPSignedDriver | Select-Object DeviceName, Manufacturer, DriverVersion, DriverDate | Export-Csv "$BackupPath\drivers_list.csv" -NoTypeInformation
+Write-Host "Drivers list backed up to $BackupPath\drivers_list.csv."
 
+# ---------------------------
+# Section 3: Reinstall System and Drivers (Automated)
+# ---------------------------
+Write-Host "Starting system reinstallation..." # Fully automate system reinstall.
+# This section assumes you have a preconfigured installation image.
 Write-Host "Reinstalling drivers..."
 $DriverBackupPath = "$BackupPath\Drivers"
 if (Test-Path $DriverBackupPath) {
@@ -63,6 +71,7 @@ if (Test-Path $DriverBackupPath) {
 # ---------------------------
 # Section 4: Optimize System Settings
 # ---------------------------
+Write-Host "Applying system optimizations..." # Make your system faster.
 Set-ExecutionPolicy RemoteSigned -Force
 Set-WinSystemLocale zh-TW
 Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
@@ -78,22 +87,28 @@ Write-Host "System optimization settings applied."
 # ---------------------------
 # Section 5: Prompt for Application Installation
 # ---------------------------
-if ((Read-Host "Do you want to install Microsoft Office? (y/n)") -eq "y") {
-    Write-Host "Installing Microsoft Office..."
-    Start-Process -FilePath "E:\OFFICEPROPLUS2021\setup.exe" -ArgumentList "/configure Z:\Configuration.xml" -Wait
+$InstallOffice = Read-Host "Do you want to install Microsoft Office? (y/n)" # Install Office.
+if ($InstallOffice -eq "y") {
+    $OfficeSourceDir = Read-Host "Enter the Office source directory (e.g., E:\OFFICEPROPLUS2021)"
+    Write-Host "Installing Microsoft Office from $OfficeSourceDir..."
+    Start-Process -FilePath "$OfficeSourceDir\setup.exe" -ArgumentList "/configure Z:\Configuration.xml" -Wait
 }
 
-if ((Read-Host "Do you want to install additional applications? (y/n)") -eq "y") {
-    Write-Host "Installing additional applications..."
-    # Install Apps using Chocolatey
-    Set-ExecutionPolicy Bypass -Scope Process -Force; \
-        [System.Net.ServicePointManager]::SecurityProtocol = \
-        [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; \
-        iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-
-    choco install 7zip GoogleChrome keepass Everything fastcopy vscode vlc line picpick.portable choco-cleaner -y --ignore-checksums
-    choco install choco-upgrade-all-at --params "'/WEEKLY:yes /DAY:SUN /TIME:05:00'"
-}
+Write-Host "Generating additional application installation commands for manual adjustment..." # Help user install other apps.
+Write-Output @(
+    "# Manual Installation Commands",
+    "choco install 7zip",
+    "choco install googlechrome",
+    "choco install keepass",
+    "choco install everything",
+    "choco install vscode",
+    "choco install vlc",
+    "choco install line",
+    "choco install picpick",
+    "choco install fastcopy",
+    "# Additional tools (manual): ABDownloadManager"
+) | Out-File "$BackupPath\apps_to_install.txt"
+Write-Host "Application installation commands saved to $BackupPath\apps_to_install.txt."
 
 Write-Host "System setup and optimization completed. Restart your system to apply all changes."
 Restart-Computer

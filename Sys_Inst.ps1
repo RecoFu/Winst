@@ -1,114 +1,130 @@
-### Winstal.ps1: Automated Script for System Setup and Optimization
+<#
+.SYNOPSIS
+Windows 11 系統升級、軟體安裝與系統優化腳本
 
-```powershell
-# ---------------------------
-# Windows System Setup Script
-# Version: 3.0
-# Author: [Your Name]
-# Description: Automates the setup, backup, and optimization of Windows systems.
-# ---------------------------
+.DESCRIPTION
+此腳本提供全自動化的 Windows 11 升級、軟體安裝與系統客製化流程
+支援手動與自動模式，增強系統部署效率與彈性
 
-# ---------------------------
-# Section 0: Cancel Upgrade (Simple English Notes)
-# ---------------------------
-# This script skips OS upgrades.
+.NOTES
+版本: 2.0
+作者: AI助理
+日期: 2024-12-04
+#>
 
-# ---------------------------
-# Section 1: List Hardware, Drivers, and Check Backup Location
-# ---------------------------
-Write-Host "Listing system hardware and drivers..." # Show hardware and driver details.
-dxdiag /t "$env:TEMP\dxdiag_output.txt"
-Write-Host "Hardware details saved to dxdiag_output.txt."
+# 全域設定
+$ErrorActionPreference = 'Stop'
+$ProgressPreference = 'SilentlyContinue'
 
-Write-Host "Getting installed drivers..." # Get current drivers.
-Get-WmiObject Win32_PnPSignedDriver | Select-Object DeviceName, Manufacturer, DriverVersion, DriverDate | Export-Csv "$env:TEMP\drivers_list.csv" -NoTypeInformation
-Write-Host "Driver list saved to drivers_list.csv."
-
-Write-Host "Checking for backup location..." # Check D: drive or OneDrive.
-if (Test-Path D:\) {
-    Write-Host "D: drive available for backup."
-} elseif ((Get-PSDrive -Name "OneDrive" -ErrorAction SilentlyContinue)) {
-    Write-Host "OneDrive available for backup."
-} else {
-    Write-Host "No suitable backup location found. Please connect a drive or ensure OneDrive is configured."
+# 日誌記錄函數
+function Write-Log {
+    param([string]$Message, [string]$Level = 'Info')
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    $logMessage = "[$Level] [$timestamp] $Message"
+    Write-Host $logMessage
+    Add-Content -Path "C:\Logs\WindowsUpgrade.log" -Value $logMessage
 }
 
-# ---------------------------
-# Section 2: Backup Drivers and Applications
-# ---------------------------
-Write-Host "Backing up drivers and applications..." # Save drivers and apps.
-$BackupPath = "D:\WinBak24H2"
-if (-Not (Test-Path $BackupPath)) {
-    New-Item -ItemType Directory -Path $BackupPath
+# 系統升級主函數
+function Invoke-WindowsUpgrade {
+    param(
+        [string]$IsoPath,
+        [string]$Edition = "Pro",
+        [switch]$AutoMode = $false
+    )
+
+    try {
+        Write-Log "開始 Windows 系統升級程序"
+        
+        # 驗證 ISO 檔案
+        if (-not (Test-Path $IsoPath)) {
+            throw "ISO 檔案不存在: $IsoPath"
+        }
+
+        # 掛載 ISO
+        $mountResult = Mount-DiskImage -ImagePath $IsoPath -PassThru
+        $driveLetter = ($mountResult | Get-Volume).DriveLetter
+
+        # 升級命令
+        $upgradeArgs = @(
+            "/auto", 
+            "upgrade", 
+            "/dynamicupdate", 
+            "disable", 
+            "/noreboot"
+        )
+
+        if ($AutoMode) {
+            $upgradeArgs += "/quiet"
+        }
+
+        # 執行升級
+        Start-Process -FilePath "$($driveLetter):\setup.exe" -ArgumentList $upgradeArgs -Wait
+
+        Write-Log "Windows 升級成功"
+    }
+    catch {
+        Write-Log "Windows 升級失敗: $_" -Level "Error"
+    }
+    finally {
+        # 卸載 ISO
+        Dismount-DiskImage -ImagePath $IsoPath
+    }
 }
 
-# Backup Drivers
-Export-WindowsDriver -Online -Destination "$BackupPath\Drivers"
-Write-Host "Drivers backed up to $BackupPath\Drivers."
+# 軟體安裝函數
+function Install-RecommendedSoftware {
+    $softwareList = @(
+        "7zip.7zip",
+        "Google.Chrome",
+        "VideoLAN.VLC",
+        "Microsoft.WindowsTerminal"
+    )
 
-# Backup Installed Applications List
-Get-StartApps | Export-Csv "$BackupPath\installed_apps.csv" -NoTypeInformation
-Write-Host "Installed applications list saved to $BackupPath\installed_apps.csv."
-
-# Backup Installed Drivers List
-Get-WmiObject Win32_PnPSignedDriver | Select-Object DeviceName, Manufacturer, DriverVersion, DriverDate | Export-Csv "$BackupPath\drivers_list.csv" -NoTypeInformation
-Write-Host "Drivers list backed up to $BackupPath\drivers_list.csv."
-
-# ---------------------------
-# Section 3: Reinstall System and Drivers (Automated)
-# ---------------------------
-Write-Host "Starting system reinstallation..." # Fully automate system reinstall.
-# This section assumes you have a preconfigured installation image.
-Write-Host "Reinstalling drivers..."
-$DriverBackupPath = "$BackupPath\Drivers"
-if (Test-Path $DriverBackupPath) {
-    pnputil.exe /add-driver "$DriverBackupPath\*.inf" /subdirs /install
-    Write-Host "Drivers reinstalled from backup."
-} else {
-    Write-Host "No driver backup found at $DriverBackupPath. Skipping driver installation."
+    foreach ($software in $softwareList) {
+        try {
+            Write-Log "安裝軟體: $software"
+            winget install $software --silent
+        }
+        catch {
+            Write-Log "安裝 $software 失敗" -Level "Warning"
+        }
+    }
 }
 
-# ---------------------------
-# Section 4: Optimize System Settings
-# ---------------------------
-Write-Host "Applying system optimizations..." # Make your system faster.
-Set-ExecutionPolicy RemoteSigned -Force
-Set-WinSystemLocale zh-TW
-Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
-bcdedit /set hypervisorlaunchtype auto
-powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-Powercfg /h /type full
-Powercfg /h on
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -n
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -n
-Enable-WindowsOptionalFeature -FeatureName "Containers-DisposableClientVM" -All -Online -n
-Write-Host "System optimization settings applied."
+# 系統優化函數
+function Optimize-SystemPerformance {
+    try {
+        # 電源與虛擬化設定
+        bcdedit /set hypervisorlaunchtype auto
+        powercfg -S 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+        Powercfg /h /type full
+        Powercfg /h on
 
-# ---------------------------
-# Section 5: Prompt for Application Installation
-# ---------------------------
-$InstallOffice = Read-Host "Do you want to install Microsoft Office? (y/n)" # Install Office.
-if ($InstallOffice -eq "y") {
-    $OfficeSourceDir = Read-Host "Enter the Office source directory (e.g., E:\OFFICEPROPLUS2021)"
-    Write-Host "Installing Microsoft Office from $OfficeSourceDir..."
-    Start-Process -FilePath "$OfficeSourceDir\setup.exe" -ArgumentList "/configure Z:\Configuration.xml" -Wait
+        # 啟用系統功能
+        $features = @(
+            "Microsoft-Hyper-V",
+            "Microsoft-Windows-Subsystem-Linux",
+            "Containers-DisposableClientVM"
+        )
+
+        foreach ($feature in $features) {
+            Enable-WindowsOptionalFeature -Online -FeatureName $feature -All -NoRestart
+        }
+
+        Write-Log "系統優化完成"
+    }
+    catch {
+        Write-Log "系統優化失敗: $_" -Level "Error"
+    }
 }
 
-Write-Host "Generating additional application installation commands for manual adjustment..." # Help user install other apps.
-Write-Output @(
-    "# Manual Installation Commands",
-    "choco install 7zip",
-    "choco install googlechrome",
-    "choco install keepass",
-    "choco install everything",
-    "choco install vscode",
-    "choco install vlc",
-    "choco install line",
-    "choco install picpick",
-    "choco install fastcopy",
-    "# Additional tools (manual): ABDownloadManager"
-) | Out-File "$BackupPath\apps_to_install.txt"
-Write-Host "Application installation commands saved to $BackupPath\apps_to_install.txt."
+# 主執行函數
+function Start-SystemUpgrade {
+    param(
+        [string]$IsoPath = "C:\Windows11_23H2.iso",
+        [switch]$AutoMode = $false
+    )
 
-Write-Host "System setup and optimization completed. Restart your system to apply all changes."
-Restart-Computer
+    # 建立日誌目錄
+    if (-not (Test-Path "C:\Logs")) {

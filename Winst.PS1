@@ -1,75 +1,98 @@
-```powershell
-# Winst.ps1 - Initial Setup after Windows 11 24H2 Installation
+# Winst.ps1 (Get the computer ready after a fresh install)
 
-# Set execution policy for the current session
-Set-ExecutionPolicy Bypass -Scope Process -Force
-
-# Region: System Locale and Page File
-# Set system locale to zh-tw
-Set-WinSystemLocale zh-tw
-
-# Disable page file (Optional - adjust as needed)
-Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0}
-# EndRegion
-
-# Region: Hyper-V and WSL (Optional)
-# Enable Hyper-V (if needed)
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -NoRestart
-
-# Enable Windows Subsystem for Linux (if needed)
-Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart
-
-# Enable Containers feature (if needed)
-Enable-WindowsOptionalFeature -Online -FeatureName "Containers-DisposableClientVM" -All -NoRestart
-# EndRegion
-
-# Region: Package Managers Installation
-# Install Chocolatey
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
-# Install winget
-Install-PackageProvider -Name NuGet -Force -Confirm:$false
-Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery -Confirm:$false
-Repair-WinGetPackageManager
-# EndRegion
-
-# Region: Essential Software Installation
-# Install essential applications using Chocolatey
-choco install 7zip googlechrome keepass everything fastcopy vscode vlc --yes -r:0 --ignore-checksums
-
-# Install essential applications using winget
-winget install Microsoft.WindowsTerminal --accept-source-agreements --silent
-winget install --id Microsoft.PowerShell --accept-source-agreements --silent
-#winget install JanDeDobbeleer.OhMyPosh --accept-source-agreements --silent  # Oh My Posh - install later, requires configuration
-
-# Install other apps (List for manual installation - adapt as needed)
-# Example: winget install <package-id> --accept-source-agreements --silent
-# Example: choco install <package-name> --yes -r:0 --ignore-checksums
-Write-Host "Following applications are recommended for manual installation:"
-Write-Host "  * Line"
-Write-Host "  * PicPick"
-Write-Host "  * Obsidian"
-Write-Host "  * etc."
-# EndRegion
-
-# Region: Driver Installation (Manual)
-Write-Host "Driver installation needs to be performed manually.  Check manufacturer website."
-# EndRegion
-
-# Region: Office Installation (Manual - Interactive)
-$installOffice = Read-Host -Prompt "Install Office? (y/n)"
-if ($installOffice -eq "y") {
-  $officePath = Read-Host -Prompt "Enter the path to the Office setup file (e.g., D:\Office\setup.exe):"
-  if (Test-Path $officePath) {
-    Start-Process -FilePath $officePath -Wait
-  } else {
-    Write-Warning "Office setup file not found at '$officePath'."
+# This part gets tools to help install things.
+function Install-PackageProvider {
+  param(
+    [string]$ProviderName # Name of the tool to get.
+  )
+  try { # Try to do this...
+    Write-Host "Getting '$ProviderName' tool..." # Tell me what's happening.
+    Install-PackageProvider -Name $ProviderName -Force | Out-Null # Get the tool.
+    Write-Host "'$ProviderName' tool got!" # All good!
+  }
+  catch { # But if something goes wrong...
+    Write-Warning "Failed to get '$ProviderName': $($_.Exception.Message)" # ...tell me what went wrong.
   }
 }
-# EndRegion
 
-# Reboot after initial setup (if required by installed software)
-if ($rebootRequired) {
-    Restart-Computer -Force
+# This part gets Chocolatey, a tool for installing things.
+function Install-Chocolatey {
+  try { # Try to do this...
+    Write-Host "Getting Chocolatey..." # Tell me what's happening.
+    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')) # Get Chocolatey.
+    Write-Host "Chocolatey got!" # All good!
+  }
+  catch { # But if something goes wrong...
+    Write-Error "Failed to get Chocolatey: $($_.Exception.Message)" # ...tell me what went wrong.
+  }
+}
+
+# This part gets Winget, another tool for installing things.
+function Install-Winget {
+  try { # Try to do this...
+    Write-Host "Getting Winget..." # Tell me what's happening.
+    Install-PackageProvider -Name NuGet -Force # Get a helper tool first.
+    Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery | Out-Null # Get Winget.
+    Repair-WinGetPackageManager # Make sure Winget is working correctly.
+    Write-Host "Winget got!" # All good!
+  }
+  catch { # But if something goes wrong...
+    Write-Warning "Failed to get Winget: $($_.Exception.Message)" # ...tell me what went wrong.
+  }
+}
+
+# This part installs programs.
+function Install-Applications {
+  param (
+    [array]$chocoPackages, # List of programs to get using Chocolatey.
+    [array]$wingetPackages # List of programs to get using Winget.
+  )
+  try { # Try to do this...
+    Write-Host "Getting programs using Chocolatey..." # Tell me what's happening.
+    choco install $chocoPackages -y --ignore-checksums # Get the programs.
+    Write-Host "Getting programs using Winget..." # Tell me what's happening.
+    winget install $wingetPackages --silent --accept-source-agreements # Get more programs.
+  }
+  catch { # But if something goes wrong...
+    Write-Warning "Getting programs failed: $($_.Exception.Message)" # ...tell me what went wrong.
+  }
+}
+
+# This part sets up some computer settings.
+function Configure-System {
+  try { # Try to do this...
+    Write-Host "Setting up computer settings..." # Tell me what's happening.
+    Set-WinSystemLocale zh-TW # Set the language.
+    Set-WmiInstance Win32_PageFileSetting -Arguments @{Name='C:\pagefile.sys'; InitialSize=0; MaximumSize=0} # Turn off something.
+    bcdedit /set hypervisorlaunchtype auto # Turn on something else.
+    Write-Host "Computer settings set up!" # All good!
+  }
+  catch { # But if something goes wrong...
+    Write-Warning "Setting up computer settings failed: $($_.Exception.Message)" # ...tell me what went wrong.
+  }
+}
+
+# Set the programs to install.
+$chocoPackages = "7zip", "GoogleChrome", "keepass", "Everything", "fastcopy", "vscode", "vlc", "line", "picpick.portable", "choco-cleaner"
+$wingetPackages = @(
+    "7zip.7zip",
+    "voidtools.Everything",
+    "line.line",
+    "picpick",
+    "Google.Chrome",
+    "VideoLAN.VLC",
+    "Microsoft.WindowsTerminal"
+)
+
+# This part does the main work.
+try { # Try to do these things...
+  Install-PackageProvider -ProviderName NuGet # Get a helper tool.
+  Install-Chocolatey # Get Chocolatey.
+  Install-Winget # Get Winget.
+  Install-Applications -chocoPackages $chocoPackages -wingetPackages $wingetPackages # Get the programs.
+  Configure-System # Set up the computer settings.
+  Write-Host "Computer is all set up!" # All good!
+}
+catch { # But if something goes wrong...
+  Write-Error "Setting up the computer failed: $($_.Exception.Message)" # ...tell me what went wrong.
 }

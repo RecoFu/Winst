@@ -1,85 +1,38 @@
-# WinUpd.ps1 (Daily work to keep computer clean and safe)
-
-# Get some computer information.  Like its name and what Windows it uses.
+# Get computer model
 $model = (Get-WmiObject -Class Win32_ComputerSystem).Model
-$winver = (Get-ComputerInfo).WindowsVersion
-$installDate = (Get-WmiObject -Class Win32_OperatingSystem).InstallDate
-$installDateFormatted = [System.Management.ManagementDateTimeConverter]::ToDateTime($installDate).ToString("yyyyMMdd")
-$defaultBackupLocation = "$model_$winver_$installDateFormatted"
+$backupFile = "D:\Backup\$model\$model-Lst.txt"
 
-# Ask where to save the backup files.
-$backupChoice = Read-Host "Choose where to save backup: 1. Automatic place, 2. I choose."
-# Check the answer.
-switch ($backupChoice) {
-  "1" { # If the answer is 1...
-    $backupLocation = $defaultBackupLocation # ...use the automatic place.
-  }
-  "2" { # If the answer is 2...
-    $backupLocation = Read-Host "Tell me where to save backup:" # ...ask the user where to save.
-  }
-  default { # If the answer is wrong...
-    Write-Warning "Wrong answer. Using automatic place." # ...use the automatic place.
-    $backupLocation = $defaultBackupLocation
-  }
-}
+# Create backup directory
+$backupPath = "D:\Backup\$model"
+New-Item -ItemType Directory -Path $backupPath -Force
 
-# Make sure the place to save backup exists.  If not, make it.
-if (!(Test-Path -Path $backupLocation)) {
-  New-Item -ItemType Directory -Force -Path $backupLocation | Out-Null
-}
+# Check hardware status
+$hardware = Get-WmiObject -Class Win32_ComputerSystem
 
-# Set the place to save the backup log.
-$backupLog = "$backupLocation\backup_log.txt"
-# Set files to backup.
-$backupFiles = @("%USERPROFILE%\Documents", "%USERPROFILE%\Pictures")
+# Check driver and application list
+$drivers = Get-WindowsDriver -Online -All
+$apps = Get-AppxPackage
 
-# This part does the backup work.
-try { # Try to do these things...
-    # Backup important files.  One by one.
-    foreach ($path in $backupFiles) {
-        Backup-Files -SourcePath $path -DestinationPath $backupLocation -LogPath $backupLog
-    }
+# Backup information to a text file
+$hardware | Out-File -FilePath $backupFile
+"Drivers:" | Out-File -FilePath $backupFile -Append
+$drivers | Format-Table -AutoSize | Out-String | Out-File -FilePath $backupFile -Append
+"Applications:" | Out-File -FilePath $backupFile -Append
+$apps | Format-Table -AutoSize | Out-String | Out-File -FilePath $backupFile -Append
 
-    # Clean up old files.
-    Clean-TempFiles
+# Backup driver and application list to CSV files
+$drivers | Export-Csv -Path "$backupPath\drivers.csv" -NoTypeInformation
+$apps | Export-Csv -Path "$backupPath\apps.csv" -NoTypeInformation
 
-    # Check for new Windows updates.
-    Write-Host "Checking for Windows updates..."
-    powershell Get-WindowsUpdate -AcceptAll -Install
+# Update system
+powershell Get-WindowsUpdate -AcceptAll -Install
 
-    Write-Host "Daily work is done!" #  All is good!
-}
-catch { # But if something goes wrong...
-    Write-Error "Daily work failed: $($_.Exception.Message)" # ...tell me what went wrong.
-}
+# Update all applications
+choco upgrade all -y
+winget upgrade --all --silent
 
+# Clean up system components
+dism.exe /Online /Cleanup-Image /StartComponentCleanup /ResetBase
 
-# This is a helper. It does the actual backup.
-function Backup-Files {
-    param(
-        [string]$SourcePath, # Where to get the files.
-        [string]$DestinationPath, # Where to save the files.
-        [string]$LogPath # Where to write what happened.
-    )
-    try { # Try to do this...
-        Write-Host "Saving files from '$SourcePath' to '$DestinationPath'..." # Tell me what's happening.
-        robocopy $SourcePath $DestinationPath /e /copyall /r:0 /w:0 /log:$LogPath # Do the saving.
-        Write-Host "Files saved!" # All good!
-    }
-    catch { # But if something goes wrong...
-        Write-Error "Saving files failed: $($_.Exception.Message)" # ...tell me what went wrong.
-    }
-}
-
-# This is another helper. It cleans up old computer files.
-function Clean-TempFiles {
-    try { # Try to do this...
-        Write-Host "Cleaning old computer files..." # Tell me what's happening.
-        Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue # Clean up!
-        Remove-Item -Path "$env:TMP\*" -Recurse -Force -ErrorAction SilentlyContinue # Clean up more!
-        Write-Host "Old computer files cleaned!" # All good!
-    }
-    catch { # But if something goes wrong...
-        Write-Warning "Cleaning up failed: $($_.Exception.Message)" # ...tell me what went wrong.
-    }
-}
+# Run Choco Cleaner
+powershell -NoProfile -ExecutionPolicy Bypass -Command "& 'C:\tools\BCURRAN3\choco-cleaner.ps1' %*"
